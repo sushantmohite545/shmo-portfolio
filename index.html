@@ -6,6 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="media/bg/lo/f000.webp" type="image/webp">
 <style>
   :root{
     --bg:#080B1F;
@@ -1186,10 +1187,87 @@
     h1.name{ font-size:clamp(44px, 15vw, 76px); }
     .type-glass{ padding:20px 22px; }
   }
+
+  /* ================= clarity + premium polish ================= */
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    text-rendering:optimizeLegibility;
+  }
+  #bgCanvas{ image-rendering:auto; }
+
+  /* thumbnails ease in once decoded instead of popping */
+  .work-card img, .folder-peek img{ opacity:0; transition:opacity .6s ease, transform .5s ease; }
+  .work-card img.is-in, .folder-peek img.is-in{ opacity:1; }
+  .motion-card video, .sr-video-wrap video{ background:#05060f; }
+
+  /* keyboard focus that matches the palette */
+  a:focus-visible, button:focus-visible, .work-card:focus-visible, .folder-card:focus-visible{
+    outline:2px solid var(--lime); outline-offset:3px;
+  }
+
+  /* ---------- reactive cursor light ---------- */
+  #cursorLight{
+    position:fixed; left:0; top:0;
+    width:0; height:0;
+    z-index:1; pointer-events:none;
+    opacity:0; transition:opacity .7s ease;
+    will-change:transform;
+  }
+  #cursorLight::before, #cursorLight::after{
+    content:''; position:absolute; border-radius:50%; transform:translate(-50%,-50%);
+    mix-blend-mode:screen;
+  }
+  /* wide, cool bloom */
+  #cursorLight::before{
+    width:760px; height:760px;
+    background:radial-gradient(circle, rgba(96,112,255,0.30) 0%, rgba(77,92,255,0.14) 32%, rgba(77,92,255,0) 66%);
+  }
+  /* tight, warm core: gives the light a point of focus */
+  #cursorLight::after{
+    width:220px; height:220px;
+    background:radial-gradient(circle, rgba(244,241,234,0.20) 0%, rgba(200,255,44,0.07) 40%, rgba(200,255,44,0) 70%);
+  }
+  #cursorLight.on{ opacity:1; }
+
+  /* ---------- light that catches on surfaces ---------- */
+  .glass, .motion-card, .work-card, .folder-card, .sr-video-wrap{ --mx:50%; --my:50%; }
+  .glass{ isolation:isolate; }
+
+  /* soft sheen across the surface */
+  .glass::after, .motion-card::after, .work-card::after, .folder-card::after, .sr-video-wrap::after{
+    content:''; position:absolute; inset:0; border-radius:inherit;
+    pointer-events:none; z-index:1;
+    background:radial-gradient(380px circle at var(--mx) var(--my), rgba(255,255,255,0.10), rgba(255,255,255,0) 62%);
+    opacity:0; transition:opacity .4s ease;
+  }
+  .glass::after{ z-index:-1; }
+  /* edge light: only the 1px border lights up, brightest right under the cursor */
+  .glass::before, .motion-card::before, .work-card::before, .folder-card::before, .sr-video-wrap::before{
+    content:''; position:absolute; inset:0; border-radius:inherit; padding:1px;
+    pointer-events:none; z-index:2;
+    background:radial-gradient(240px circle at var(--mx) var(--my), rgba(214,255,98,0.85), rgba(104,120,255,0.45) 45%, rgba(104,120,255,0) 72%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+    mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    opacity:0; transition:opacity .4s ease;
+  }
+  .glass::before{ z-index:3; }
+  .glass:hover::after, .motion-card:hover::after, .work-card:hover::after, .folder-card:hover::after, .sr-video-wrap:hover::after,
+  .glass:hover::before, .motion-card:hover::before, .work-card:hover::before, .folder-card:hover::before, .sr-video-wrap:hover::before{ opacity:1; }
+
+  /* captions and controls stay above the light so type is never washed out */
+  .wc-cap, .mc-cap, .folder-cap, .sr-cta-row, .sr-meta, .mc-rec, .wc-play, .wc-plus, .mc-plus{ z-index:4; }
+
+  @media (hover:none), (pointer:coarse), (prefers-reduced-motion: reduce){
+    #cursorLight{ display:none; }
+  }
 </style>
 
 <canvas id="bgCanvas"></canvas>
 <div id="bgScrim"></div>
+<div id="cursorLight" aria-hidden="true"></div>
 <div class="grid-overlay" id="gridOverlay"></div>
 
 <div class="stage" id="stage">
@@ -1279,9 +1357,7 @@
   <div class="sr-eyebrow glass">Reel · 2026</div>
   <h2 class="sr-heading">Showreel</h2>
   <div class="sr-video-wrap">
-    <video id="reelTeaser" autoplay muted loop playsinline preload="auto">
-      <source id="reelTeaserWebm" type="video/webm">
-      <source id="reelTeaserMp4" type="video/mp4">
+    <video id="reelTeaser" autoplay muted loop playsinline preload="none">
     </video>
     <div class="sr-scrim"></div>
     <div class="sr-meta glass">Preview · 12s</div>
@@ -1306,8 +1382,6 @@
     <div class="motion-card">
       <div class="mc-rec"><span class="dot"></span>LOOP</div>
       <video autoplay muted loop playsinline preload="none">
-        <source id="mc1Webm" type="video/webm">
-        <source id="mc1Mp4" type="video/mp4">
       </video>
       <div class="mc-scrim"></div>
       <div class="mc-plus">+</div>
@@ -1319,8 +1393,6 @@
     <div class="motion-card">
       <div class="mc-rec"><span class="dot"></span>LOOP</div>
       <video autoplay muted loop playsinline preload="none">
-        <source id="mc2Webm" type="video/webm">
-        <source id="mc2Mp4" type="video/mp4">
       </video>
       <div class="mc-scrim"></div>
       <div class="mc-plus">+</div>
@@ -1332,8 +1404,6 @@
     <div class="motion-card">
       <div class="mc-rec"><span class="dot"></span>LOOP</div>
       <video autoplay muted loop playsinline preload="none">
-        <source id="mc3Webm" type="video/webm">
-        <source id="mc3Mp4" type="video/mp4">
       </video>
       <div class="mc-scrim"></div>
       <div class="mc-plus">+</div>
@@ -1345,8 +1415,6 @@
     <div class="motion-card">
       <div class="mc-rec"><span class="dot"></span>LOOP</div>
       <video autoplay muted loop playsinline preload="none">
-        <source id="mc4Webm" type="video/webm">
-        <source id="mc4Mp4" type="video/mp4">
       </video>
       <div class="mc-scrim"></div>
       <div class="mc-plus">+</div>
@@ -1358,8 +1426,6 @@
     <div class="motion-card">
       <div class="mc-rec"><span class="dot"></span>LOOP</div>
       <video autoplay muted loop playsinline preload="none">
-        <source id="mc5Webm" type="video/webm">
-        <source id="mc5Mp4" type="video/mp4">
       </video>
       <div class="mc-scrim"></div>
       <div class="mc-plus">+</div>
@@ -1371,8 +1437,6 @@
     <div class="motion-card">
       <div class="mc-rec"><span class="dot"></span>LOOP</div>
       <video autoplay muted loop playsinline preload="none">
-        <source id="mc6Webm" type="video/webm">
-        <source id="mc6Mp4" type="video/mp4">
       </video>
       <div class="mc-scrim"></div>
       <div class="mc-plus">+</div>
@@ -1564,25 +1628,16 @@
 </div>
 
 <script>
-window.SHMO_FRAMES=["media/frames/frame_000.jpg", "media/frames/frame_001.jpg", "media/frames/frame_002.jpg", "media/frames/frame_003.jpg", "media/frames/frame_004.jpg", "media/frames/frame_005.jpg", "media/frames/frame_006.jpg", "media/frames/frame_007.jpg", "media/frames/frame_008.jpg", "media/frames/frame_009.jpg", "media/frames/frame_010.jpg", "media/frames/frame_011.jpg", "media/frames/frame_012.jpg", "media/frames/frame_013.jpg", "media/frames/frame_014.jpg", "media/frames/frame_015.jpg", "media/frames/frame_016.jpg", "media/frames/frame_017.jpg", "media/frames/frame_018.jpg", "media/frames/frame_019.jpg", "media/frames/frame_020.jpg", "media/frames/frame_021.jpg", "media/frames/frame_022.jpg", "media/frames/frame_023.jpg", "media/frames/frame_024.jpg", "media/frames/frame_025.jpg", "media/frames/frame_026.jpg", "media/frames/frame_027.jpg", "media/frames/frame_028.jpg", "media/frames/frame_029.jpg", "media/frames/frame_030.jpg", "media/frames/frame_031.jpg", "media/frames/frame_032.jpg", "media/frames/frame_033.jpg", "media/frames/frame_034.jpg", "media/frames/frame_035.jpg", "media/frames/frame_036.jpg", "media/frames/frame_037.jpg", "media/frames/frame_038.jpg", "media/frames/frame_039.jpg", "media/frames/frame_040.jpg", "media/frames/frame_041.jpg", "media/frames/frame_042.jpg", "media/frames/frame_043.jpg", "media/frames/frame_044.jpg", "media/frames/frame_045.jpg", "media/frames/frame_046.jpg", "media/frames/frame_047.jpg", "media/frames/frame_048.jpg", "media/frames/frame_049.jpg", "media/frames/frame_050.jpg", "media/frames/frame_051.jpg", "media/frames/frame_052.jpg", "media/frames/frame_053.jpg", "media/frames/frame_054.jpg", "media/frames/frame_055.jpg", "media/frames/frame_056.jpg", "media/frames/frame_057.jpg", "media/frames/frame_058.jpg", "media/frames/frame_059.jpg", "media/frames/frame_060.jpg", "media/frames/frame_061.jpg", "media/frames/frame_062.jpg", "media/frames/frame_063.jpg", "media/frames/frame_064.jpg", "media/frames/frame_065.jpg", "media/frames/frame_066.jpg", "media/frames/frame_067.jpg", "media/frames/frame_068.jpg", "media/frames/frame_069.jpg", "media/frames/frame_070.jpg", "media/frames/frame_071.jpg", "media/frames/frame_072.jpg", "media/frames/frame_073.jpg", "media/frames/frame_074.jpg", "media/frames/frame_075.jpg", "media/frames/frame_076.jpg", "media/frames/frame_077.jpg", "media/frames/frame_078.jpg", "media/frames/frame_079.jpg", "media/frames/frame_080.jpg", "media/frames/frame_081.jpg", "media/frames/frame_082.jpg", "media/frames/frame_083.jpg"];
-</script>
-<script>
-window.SHMO_TEASER_WEBM="media/teaser_webm.webm";
-window.SHMO_TEASER="media/teaser.mp4";
-</script>
-<script>
-window.SHMO_MOTION_1_MP4="media/motion_1_mp4.mp4";
-window.SHMO_MOTION_1_WEBM="media/motion_1_webm.webm";
-window.SHMO_MOTION_2_MP4="media/motion_2_mp4.mp4";
-window.SHMO_MOTION_2_WEBM="media/motion_2_webm.webm";
-window.SHMO_MOTION_3_MP4="media/motion_3_mp4.mp4";
-window.SHMO_MOTION_3_WEBM="media/motion_3_webm.webm";
-window.SHMO_MOTION_4_MP4="media/motion_4_mp4.mp4";
-window.SHMO_MOTION_4_WEBM="media/motion_4_webm.webm";
-window.SHMO_MOTION_5_MP4="media/motion_5_mp4.mp4";
-window.SHMO_MOTION_5_WEBM="media/motion_5_webm.webm";
-window.SHMO_MOTION_6_MP4="media/motion_6_mp4.mp4";
-window.SHMO_MOTION_6_WEBM="media/motion_6_webm.webm";
+window.SHMO_BG={count:84, dir:"media/bg/", ext:".webp"};
+window.SHMO_TEASER={hd:"media/teaser_1080.mp4", sd:"media/teaser_720.mp4", poster:"media/posters/teaser.webp"};
+window.SHMO_MOTION=[null,
+  {src:"media/motion_1.mp4", poster:"media/posters/motion_1.webp"},
+  {src:"media/motion_2.mp4", poster:"media/posters/motion_2.webp"},
+  {src:"media/motion_3.mp4", poster:"media/posters/motion_3.webp"},
+  {src:"media/motion_4.mp4", poster:"media/posters/motion_4.webp"},
+  {src:"media/motion_5.mp4", poster:"media/posters/motion_5.webp"},
+  {src:"media/motion_6.mp4", poster:"media/posters/motion_6.webp"}
+];
 </script>
 <script>
 (function(){
@@ -1592,54 +1647,47 @@ window.SHMO_MOTION_6_WEBM="media/motion_6_webm.webm";
   (function(){
     var v = document.getElementById('reelTeaser');
     var cta = document.getElementById('watchFullReel');
-    var srcWebm = document.getElementById('reelTeaserWebm');
-    var srcMp4 = document.getElementById('reelTeaserMp4');
-    if(v && srcWebm && srcMp4 && window.SHMO_TEASER){
-      if(window.SHMO_TEASER_WEBM) srcWebm.src = window.SHMO_TEASER_WEBM;
-      srcMp4.src = window.SHMO_TEASER;
-      v.load();
-      if(reduceMotion){ v.removeAttribute('autoplay'); v.pause(); }
-      else {
-        var tryPlay = function(){ v.play && v.play().catch(function(){}); };
-        v.addEventListener('loadeddata', tryPlay, {once:true});
-        tryPlay();
+    // connection / screen awareness: pick the sharpest video that still loads quickly
+    var conn = navigator.connection || {};
+    var slowNet = /(^|-)2g$/.test(conn.effectiveType || '');
+    var saveData = !!conn.saveData;
+    var pxWide = window.innerWidth * Math.min(window.devicePixelRatio || 1, 2);
+
+    function lazyVideo(vid, getSrc, poster, margin){
+      if(!vid) return;
+      if(poster) vid.setAttribute('poster', poster);
+      if(reduceMotion){ vid.removeAttribute('autoplay'); vid.pause(); return; }
+      var primed = false;
+      function safePlay(){ var pr = vid.play && vid.play(); if(pr && pr.catch) pr.catch(function(){}); }
+      function prime(){
+        if(primed) return;
+        primed = true;
+        vid.src = getSrc();
+        vid.load();
+        safePlay();
       }
+      if(!('IntersectionObserver' in window)){ prime(); return; }
+      var obs = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if(e.isIntersecting){ if(!primed) prime(); else if(vid.paused) safePlay(); }
+          else if(primed){ vid.pause(); }
+        });
+      }, {threshold:0.05, rootMargin: margin});
+      obs.observe(vid);
     }
 
-    // motion studies loops — source + load deferred until the clip is actually
-    // about to scroll into view, instead of fetching all 6 up front
-    for(var mi=1; mi<=6; mi++){
-      (function(idx){
-        var webmSrc = document.getElementById('mc'+idx+'Webm');
-        var mp4Src = document.getElementById('mc'+idx+'Mp4');
-        var webmData = window['SHMO_MOTION_'+idx+'_WEBM'];
-        var mp4Data = window['SHMO_MOTION_'+idx+'_MP4'];
-        if(!webmSrc || !mp4Src || !mp4Data) return;
-        var vid = webmSrc.closest('video');
-        var primed = false;
-        function prime(){
-          if(primed) return;
-          primed = true;
-          if(webmData) webmSrc.src = webmData;
-          mp4Src.src = mp4Data;
-          vid.load();
-        }
-        if(reduceMotion){
-          prime();
-          vid.removeAttribute('autoplay');
-          vid.pause();
-        } else {
-          var obs = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
-            entries.forEach(function(e){
-              if(e.isIntersecting){ prime(); vid.play && vid.play().catch(function(){}); }
-              else { vid.pause && vid.pause(); }
-            });
-          }, {threshold:0.1, rootMargin:'200px 0px'}) : null;
-          if(obs){ obs.observe(vid); }
-          else { prime(); vid.play && vid.play().catch(function(){}); }
-        }
-      })(mi);
+    // showreel teaser: poster shows instantly, the video streams in as it nears the viewport
+    var teaser = window.SHMO_TEASER;
+    if(teaser && v){
+      var useHD = pxWide >= 1500 && !slowNet && !saveData;
+      lazyVideo(v, function(){ return useHD ? teaser.hd : teaser.sd; }, teaser.poster, '900px 0px');
     }
+
+    // motion studies loops: each clip streams in only when it is about to scroll into view
+    document.querySelectorAll('.motion-card video').forEach(function(vid, i){
+      var m = window.SHMO_MOTION && window.SHMO_MOTION[i+1];
+      if(m) lazyVideo(vid, function(){ return m.src; }, m.poster, '300px 0px');
+    });
 
     // interactive stickers — click to pop + ripple
     (function(){
@@ -1752,26 +1800,89 @@ window.SHMO_MOTION_6_WEBM="media/motion_6_webm.webm";
 
   var mouseX=0, mouseY=0, curX=0, curY=0;
   var scrollP = 0;
+  var pumpTick = 0;
 
   // ---------- scroll-scrubbed full-bleed background sequence ----------
-  var frameSrcs = window.SHMO_FRAMES || [];
-  var frameCount = frameSrcs.length;
-  var frames = [];
+  // Every frame exists in three sizes. The tiny "lo" set loads up front so scrubbing always
+  // works instantly; the sharp set (mid / hi) streams in only for frames near the scroll position
+  // and is released again behind you, so the page stays fast and memory stays small.
+  var BG = window.SHMO_BG || null;
+  var frameCount = BG ? BG.count : 0;
+  var TIERS = ['lo','mid','hi'];
+  var imgs = { lo:{}, mid:{}, hi:{} };
+  var loading = { lo:{}, mid:{}, hi:{} };
+  var failed = { lo:{}, mid:{}, hi:{} };
   var currentFrame = -1;
+  var inflight = 0;
+  var MAX_INFLIGHT = 4;
+  var BEHIND = 4, AHEAD = 10, KEEP_BEHIND = 8, KEEP_AHEAD = 16;
+  var bgConn = navigator.connection || {};
+  var capTier = /(^|-)2g$/.test(bgConn.effectiveType || '') ? 'lo' : (bgConn.saveData ? 'mid' : 'hi');
+
+  function pad3(n){ return ('00'+n).slice(-3); }
 
   function sizeCanvas(){
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.max(1, Math.round(window.innerWidth * dpr));
     canvas.height = Math.max(1, Math.round(window.innerHeight * dpr));
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+  }
+
+  function wantedTier(){
+    var t = canvas.width > 1500 ? 'hi' : 'mid';
+    if(TIERS.indexOf(t) > TIERS.indexOf(capTier)) t = capTier;
+    return t;
+  }
+
+  // sharpest version of this frame that is ready right now
+  function bestImage(idx){
+    var wi = TIERS.indexOf(wantedTier()), i, im;
+    for(i = wi; i >= 0; i--){ im = imgs[TIERS[i]][idx]; if(im) return im; }
+    for(i = wi + 1; i < TIERS.length; i++){ im = imgs[TIERS[i]][idx]; if(im) return im; }
+    return null;
+  }
+
+  function loadImg(tier, idx){
+    if(imgs[tier][idx] || loading[tier][idx] || failed[tier][idx]) return;
+    loading[tier][idx] = true; inflight++;
+    var im = new Image();
+    im.decoding = 'async';
+    function fin(ok){
+      inflight--; delete loading[tier][idx];
+      if(ok) imgs[tier][idx] = im; else failed[tier][idx] = true;
+    }
+    im.onload = function(){
+      if(im.decode){ im.decode().then(function(){ fin(true); }, function(){ fin(true); }); }
+      else { fin(true); }
+    };
+    im.onerror = function(){ fin(false); };
+    im.src = BG.dir + tier + '/f' + pad3(idx) + BG.ext;
+  }
+
+  // keep the sharp tier loaded around the playhead, closest frames first
+  function pump(cur){
+    var w = wantedTier(), t, k;
+    for(t = 1; t < TIERS.length; t++){
+      var store = imgs[TIERS[t]];
+      for(k in store){ if(+k < cur - KEEP_BEHIND || +k > cur + KEEP_AHEAD){ delete store[k]; } }
+    }
+    if(w === 'lo') return;
+    var order = [cur], d;
+    for(d = 1; d <= AHEAD; d++){ order.push(cur + d); if(d <= BEHIND) order.push(cur - d); }
+    for(var oi = 0; oi < order.length && inflight < MAX_INFLIGHT; oi++){
+      var idx = order[oi];
+      if(idx >= 0 && idx < frameCount) loadImg(w, idx);
+    }
   }
 
   // cover-fit crop, with an optional small pan offset (-1..1) for subtle cursor parallax
   function drawFrame(idx, panX, panY){
-    var img = frames[idx];
-    if(!img || !img.complete || img.naturalWidth === 0) return;
+    var img = bestImage(idx);
+    if(!img) return;
     var iw = img.naturalWidth, ih = img.naturalHeight;
     var cw = canvas.width, ch = canvas.height;
-    if(!cw || !ch) return;
+    if(!cw || !ch || !iw) return;
     var scale = Math.max(cw/iw, ch/ih);
     var sw = cw/scale, sh = ch/scale;
     var maxOffX = Math.max(0, (iw-sw)/2), maxOffY = Math.max(0, (ih-sh)/2);
@@ -1779,23 +1890,16 @@ window.SHMO_MOTION_6_WEBM="media/motion_6_webm.webm";
     var sy = (ih-sh)/2 + (panY||0)*maxOffY;
     sx = Math.max(0, Math.min(iw-sw, sx));
     sy = Math.max(0, Math.min(ih-sh, sy));
-    ctx.clearRect(0,0,cw,ch);
     ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
     currentFrame = idx;
   }
 
   if(frameCount){
     sizeCanvas();
-    for(var fi=0; fi<frameCount; fi++){
-      (function(index){
-        var img = new Image();
-        img.onload = function(){
-          if(index === 0) drawFrame(0, 0, 0);
-        };
-        img.src = frameSrcs[index];
-        frames[index] = img;
-      })(fi);
-    }
+    // first paint: the sharp first frame, then the tiny set for everything else
+    if(wantedTier() !== 'lo') loadImg(wantedTier(), 0);
+    loadImg('lo', 0);
+    for(var fi = 1; fi < frameCount; fi++){ loadImg('lo', fi); }
     window.addEventListener('resize', function(){
       sizeCanvas();
       if(currentFrame >= 0) drawFrame(currentFrame, curX*0.4, curY*0.4);
@@ -1818,13 +1922,18 @@ window.SHMO_MOTION_6_WEBM="media/motion_6_webm.webm";
     curY += (mouseY - curY) * 0.05;
 
     if(!reduceMotion){
-      // bent-sheet scroll warp on the scrolling content layer (video stays fixed underneath)
-      var warpRot = scrollP * 22;
-      var warpScale = 1 - scrollP*0.06;
-      var warpOpacity = 1 - scrollP*0.45;
-      warp.style.transform = 'rotateX('+warpRot+'deg) scale('+warpScale+')';
-      warp.style.opacity = warpOpacity;
-      warp.style.transformOrigin = '50% 100%';
+      // bent-sheet scroll warp on the scrolling content layer (video stays fixed underneath).
+      // At rest the transform is removed entirely so the hero text is rasterised crisp.
+      if(scrollP < 0.002){
+        if(warp.style.transform){ warp.style.transform = ''; warp.style.opacity = ''; }
+      } else {
+        var warpRot = scrollP * 22;
+        var warpScale = 1 - scrollP*0.06;
+        var warpOpacity = 1 - scrollP*0.45;
+        warp.style.transform = 'rotateX('+warpRot+'deg) scale('+warpScale+')';
+        warp.style.opacity = warpOpacity;
+        warp.style.transformOrigin = '50% 100%';
+      }
     }
 
     // background sequence: scroll position drives which frame shows (top of site = frame 0,
@@ -1834,6 +1943,7 @@ window.SHMO_MOTION_6_WEBM="media/motion_6_webm.webm";
       var panX = reduceMotion ? 0 : curX*0.4;
       var panY = reduceMotion ? 0 : curY*0.4;
       drawFrame(targetFrame, panX, panY);
+      if((pumpTick++ % 6) === 0 && !document.hidden) pump(targetFrame);
     }
 
     requestAnimationFrame(tick);
@@ -1919,10 +2029,21 @@ window.SHMO_MOTION_6_WEBM="media/motion_6_webm.webm";
 
   function esc(s){ return String(s==null?'':s); }
 
+  // Vimeo thumbnails default to 640x360, which looks soft on wide cards and retina screens.
+  // Ask for a 1280 version too and let the browser pick; if that size is ever refused,
+  // the onerror hook drops back to the original 640 image.
+  function thumbImg(url, alt, sizes){
+    var big = (url.indexOf('i.vimeocdn.com') > -1 && url.indexOf('d_640x360') > -1) ? url.replace('d_640x360', 'd_1280x720') : '';
+    var fade = ' onload="this.classList.add(\'is-in\')"';
+    if(!big) return '<img src="'+url+'" alt="'+alt+'" loading="lazy" decoding="async"'+fade+'>';
+    return '<img src="'+url+'" srcset="'+url+' 640w, '+big+' 1280w" sizes="'+sizes+'" alt="'+alt+'" loading="lazy" decoding="async" data-fb="'+url+'"'
+      + fade + ' onerror="if(this.dataset.fb){var f=this.dataset.fb;this.removeAttribute(\'srcset\');this.removeAttribute(\'data-fb\');this.src=f;}">';
+  }
+
   function cardHTML(p){
     var img = p.thumb || placeholderThumb(p.title);
     return '<div class="work-card" data-project="'+p.id+'">'
-      + '<img src="'+img+'" alt="'+esc(p.title)+'" loading="lazy">'
+      + thumbImg(img, esc(p.title), '(max-width: 720px) 100vw, (max-width: 1100px) 50vw, 33vw')
       + '<div class="wc-scrim"></div>'
       + '<div class="wc-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>'
       + '<div class="wc-plus">+</div>'
@@ -1937,7 +2058,7 @@ window.SHMO_MOTION_6_WEBM="media/motion_6_webm.webm";
     var imgs = HIGHLIGHTS.map(function(h){ return h.thumb || placeholderThumb(h.title); });
     return '<div class="folder-card" data-project="schbang-highlights">'
       + '<div class="folder-peeks">'
-      + imgs.map(function(src){ return '<div class="folder-peek"><img src="'+src+'" alt=""></div>'; }).join('')
+      + imgs.map(function(src){ return '<div class="folder-peek">'+thumbImg(src, '', '(max-width: 720px) 40vw, 14vw')+'</div>'; }).join('')
       + '</div>'
       + '<div class="folder-base"></div>'
       + '<div class="folder-cap">'
@@ -2067,5 +2188,42 @@ window.SHMO_MOTION_6_WEBM="media/motion_6_webm.webm";
   window.addEventListener('hashchange', route);
   renderFeatured();
   route();
+})();
+</script>
+
+<script>
+// reactive cursor light + surface highlights (fine pointers only, off for reduced motion)
+(function(){
+  var light = document.getElementById('cursorLight');
+  if(!light) return;
+  var fine = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!fine || calm){ light.parentNode.removeChild(light); return; }
+
+  var SURFACES = '.glass, .motion-card, .work-card, .folder-card, .sr-video-wrap';
+  var tx = window.innerWidth/2, ty = window.innerHeight/3, x = tx, y = ty, shown = false, raf = 0;
+
+  function frame(){
+    x += (tx - x) * 0.16;
+    y += (ty - y) * 0.16;
+    light.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+    raf = (Math.abs(tx-x) > 0.3 || Math.abs(ty-y) > 0.3) ? requestAnimationFrame(frame) : 0;
+  }
+
+  window.addEventListener('pointermove', function(e){
+    if(e.pointerType && e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
+    tx = e.clientX; ty = e.clientY;
+    if(!shown){ shown = true; x = tx; y = ty; light.classList.add('on'); }
+    if(!raf) raf = requestAnimationFrame(frame);
+    var t = e.target && e.target.closest ? e.target.closest(SURFACES) : null;
+    if(t){
+      var r = t.getBoundingClientRect();
+      t.style.setProperty('--mx', (e.clientX - r.left).toFixed(0) + 'px');
+      t.style.setProperty('--my', (e.clientY - r.top).toFixed(0) + 'px');
+    }
+  }, {passive:true});
+
+  document.documentElement.addEventListener('pointerleave', function(){ light.classList.remove('on'); shown = false; });
+  document.documentElement.addEventListener('pointerenter', function(){ if(!shown && tx) { light.classList.add('on'); shown = true; } });
 })();
 </script>
