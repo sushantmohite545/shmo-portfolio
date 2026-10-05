@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SHMO · A</title>
+<link rel="stylesheet" href="base.css"><style>
+body{background:#EFE9DD;color:#111;height:100vh;overflow:hidden}
+.wall{position:fixed;inset:-10% -5%;display:grid;grid-template-columns:repeat(6,1fr);gap:16px;transform:rotate(-6deg) scale(1.1)}
+.col{display:flex;flex-direction:column;gap:16px;animation:up 38s linear infinite}
+.col:nth-child(even){animation-direction:reverse;animation-duration:46s}
+.col:nth-child(3n){animation-duration:55s}
+@keyframes up{to{transform:translateY(-50%)}}
+.t{border-radius:22px;overflow:hidden;flex:none;aspect-ratio:3/4;position:relative}
+.t.w{aspect-ratio:16/10}.t.s{aspect-ratio:1}
+.t img{width:100%;height:100%;object-fit:cover;display:block}
+.t.ty{display:grid;place-items:center;font:900 clamp(34px,5vw,80px)/.85 'Anybody',sans-serif;font-stretch:60%;text-transform:uppercase;text-align:center;padding:10px}
+.c1{background:#C6F432;color:#2b1566}.c2{background:#7B3FF2;color:#FFD3F1}.c3{background:#FF6A2B;color:#fff3c9}.c4{background:#FF9BD2;color:#5a0f3b}.c5{background:#2F4BFF;color:#C6F432}
+.veil{position:fixed;inset:0;background:radial-gradient(ellipse 48% 42% at 50% 50%,#EFE9DDf5 55%,#EFE9DD00 100%);pointer-events:none}
+.hero{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;gap:18px}
+h1{font:900 clamp(96px,22vw,330px)/.8 'Anybody',sans-serif;font-stretch:120%;color:#FF4B3E;letter-spacing:-.02em;--x:0px;--y:0px;
+ text-shadow:calc(var(--x)*1) calc(var(--y)*1) 0 #2F4BFF,calc(var(--x)*2) calc(var(--y)*2) 0 #2F4BFF,calc(var(--x)*3) calc(var(--y)*3) 0 #2F4BFF,calc(var(--x)*4) calc(var(--y)*4) 0 #2F4BFF,calc(var(--x)*5) calc(var(--y)*5) 0 #2F4BFF,calc(var(--x)*6) calc(var(--y)*6) 0 #2F4BFF,calc(var(--x)*7) calc(var(--y)*7) 0 #2F4BFF,calc(var(--x)*8) calc(var(--y)*8) 0 #2F4BFF,calc(var(--x)*9) calc(var(--y)*9) 0 #2F4BFF,calc(var(--x)*10) calc(var(--y)*10) 0 #2F4BFF,calc(var(--x)*10) calc(var(--y)*10+14px) 22px #0004;animation:pop .9s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes pop{from{transform:scale(.6) rotate(-6deg);opacity:0}}
+.sub{font:italic 500 clamp(20px,3vw,36px)/1.1 'Bodoni',serif}
+.sub b{font-weight:800}
+.row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.tag{position:fixed;top:18px;left:20px;right:20px;display:flex;justify-content:space-between;font:600 12px 'Anybody',sans-serif;font-stretch:118%;letter-spacing:.08em;text-transform:uppercase;z-index:5}
+</style></head><body>
+<div class="tag"><span>Sushant Mohite</span><span>Mumbai · Video + Motion</span></div>
+<div class="wall" id="wall"></div><div class="veil"></div>
+<main class="hero"><h1 id="h">SHMO</h1>
+<p class="sub">Video editor &amp; <b>motion designer</b>, four and a half years of making things move.</p>
+<div class="row"><a class="btn" href="../index.html#work">See the work</a><a class="btn o" href="mailto:sushant.mohite545@gmail.com">Say hi</a></div></main>
+<nav class="sw"><a href="a-poster-wall.html" class="on">A · WALL</a><a href="b-sticker-pop.html" class="">B · POP</a><a href="c-big-type.html" class="">C · TYPE</a></nav>
+<script>
+var S=['s01','s02','s03','s05','s06','s07','s13','s14','s16','s17','s18','s19','s20'],W=['MOTION','EDIT','COLOR','CUT','LOOP','SHMO','FRAMES','PLAY'],C=['c1','c2','c3','c4','c5'];
+var shapes=['','w','s'],wall=document.getElementById('wall'),n=0;
+for(var c=0;c<6;c++){var col=document.createElement('div');col.className='col';var h='';
+ for(var r=0;r<2;r++)for(var i=0;i<7;i++){n++;
+  if((i+c)%3==1)h+='<div class="t ty '+C[(n+c)%5]+' '+shapes[n%3]+'">'+W[(n*3+c)%8]+'</div>';
+  else h+='<div class="t '+shapes[(n+c)%3]+'"><img loading="lazy" alt="" src="../media/stills/'+S[(n*5+c)%13]+'.webp"></div>';}
+ col.innerHTML=h;wall.appendChild(col)}
+var H=document.getElementById('h');
+if(matchMedia('(hover:hover)').matches)addEventListener('pointermove',function(e){var x=(e.clientX/innerWidth-.5),y=(e.clientY/innerHeight-.5);
+ H.style.setProperty('--x',(-x*1.6)+'px');H.style.setProperty('--y',(-y*1.6)+'px');wall.style.translate=(x*-30)+'px '+(y*-30)+'px'});
+</script></body></html>
