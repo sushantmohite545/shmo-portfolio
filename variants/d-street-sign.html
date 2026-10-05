@@ -1,13 +1,13 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SHMO · D</title>
 <link rel="stylesheet" href="base.css"><style>
-:root{--cream:#F4EFE6;--red:#FF4B3E;--blue:#2F4BFF;--ink:#111}
-.sw{bottom:auto!important;top:12px}html{overflow:hidden}body{background:var(--cream);color:var(--ink);height:100vh;overflow:hidden;position:relative}
+:root{--bg:#080B1F;--bg2:#0D1130;--ink:#F4F1EA;--dim:#9AA0C0;--blue:#4D5CFF;--lime:#C8FF2C;--orange:#FF7A45}
+.sw{bottom:auto!important;top:12px}html{overflow:hidden}body{background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;position:relative}
 .bg{position:fixed;inset:0;background:
- radial-gradient(60vmax 50vmax at 0% 100%,#FF4B3E2b,transparent 60%),
- radial-gradient(55vmax 45vmax at 100% 0%,#2F4BFF22,transparent 60%),
- radial-gradient(40vmax 40vmax at 100% 100%,#FFC85A33,transparent 60%),
- repeating-linear-gradient(0deg,#1111110a 0 1px,transparent 1px 56px),
- repeating-linear-gradient(90deg,#1111110a 0 1px,transparent 1px 56px)}
+ radial-gradient(60vmax 50vmax at 0% 100%,#FF7A4530,transparent 60%),
+ radial-gradient(55vmax 45vmax at 100% 0%,#4D5CFF55,transparent 60%),
+ radial-gradient(40vmax 40vmax at 50% 55%,#C8FF2C14,transparent 60%),
+ repeating-linear-gradient(0deg,#ffffff0d 0 1px,transparent 1px 56px),
+ repeating-linear-gradient(90deg,#ffffff0d 0 1px,transparent 1px 56px)}
 .stage{--u:min(1vw,1.5vh);font-size:var(--u);position:absolute;left:50%;top:50%;width:100em;height:62em;translate:-50% -53%;--mx:0;--my:0}
 .abs{position:absolute}
 /* ribbon */
@@ -17,7 +17,7 @@
 /* pole */
 .pole{left:47.4em;top:22em;width:2.6em;height:31em;background:linear-gradient(90deg,#8d9096,#e9ebee 40%,#a4a8ae 70%,#6c7077);border-radius:.4em;box-shadow:0 2em 3em #0003}
 /* signs */
-.sign{background:linear-gradient(175deg,#4862ff,var(--blue) 55%,#2037d4);border-radius:2.2em;box-shadow:inset 0 0 0 .38em #ffffff55,inset 0 .6em 1em #ffffff33,0 2.4em 3.4em #12208a55;color:var(--cream);display:flex;align-items:center;transform-origin:50% 50%;
+.sign{background:linear-gradient(175deg,#7380ff,var(--blue) 55%,#3643d6);border-radius:2.2em;box-shadow:inset 0 0 0 .38em #ffffff55,inset 0 .6em 1em #ffffff33,0 2.4em 4em #000a,0 0 6em #4D5CFF44;color:var(--ink);display:flex;align-items:center;transform-origin:50% 50%;
  translate:calc(var(--mx)*-.8em) calc(var(--my)*-.6em)}
 .sA{left:8em;top:11em;width:64em;height:20em;rotate:4deg;padding:0 5em 0 4.6em;gap:3em;justify-content:space-between;animation:drop .9s .1s cubic-bezier(.3,1.5,.5,1) both}
 .sB{left:25em;top:30em;width:68em;height:21em;rotate:-4.5deg;padding:0 4em 0 4.8em;gap:2.6em;animation:drop .9s .3s cubic-bezier(.3,1.5,.5,1) both}
@@ -25,30 +25,30 @@
 .sA .t1{white-space:nowrap;font:800 7.4em/.9 'Anybody',sans-serif;font-stretch:104%;letter-spacing:-.02em;display:block}
 .sA .t2{font:italic 500 4.6em/1 'Bodoni',serif;display:block;margin-top:.15em;padding-left:.2em}
 .sB .it{font:italic 500 4.4em/1 'Bodoni',serif;display:block}
-.sB .t1{font:900 12.4em/.8 'Anybody',sans-serif;font-stretch:118%;letter-spacing:-.02em;display:block;color:var(--cream)}
+.sB{background:linear-gradient(175deg,#dcff6e,var(--lime) 55%,#a8e000)!important;color:var(--bg)!important;box-shadow:inset 0 0 0 .38em #ffffff77,inset 0 .6em 1em #ffffff55,0 2.4em 4em #000a,0 0 6em #C8FF2C33!important}.sB .ar{fill:var(--bg)}.sB .vl{background:#080B1F55}.sB .t1{font:900 12.4em/.8 'Anybody',sans-serif;font-stretch:118%;letter-spacing:-.02em;display:block}
 .sB .t3{font:600 1.7em/1 'Anybody',sans-serif;font-stretch:122%;letter-spacing:.12em;text-transform:uppercase;display:block;margin-top:1.6em;opacity:.85}
-.ar{width:5.2em;height:5.2em;flex:none;fill:var(--cream)}
+.ar{width:5.2em;height:5.2em;flex:none;fill:var(--ink)}
 .vl{width:.25em;align-self:stretch;margin:3.6em 0;background:#fff5;border-radius:1em;flex:none}
 .clamp{width:6.2em;height:3.6em;left:44.9em;border-radius:.7em;background:linear-gradient(#cfd2d6,#8e929a);box-shadow:0 .5em .9em #0004,inset 0 0 0 .2em #fff6}
 .clamp i{position:absolute;top:50%;width:.9em;height:.9em;border-radius:50%;background:#555;translate:0 -50%;box-shadow:inset 0 .12em .2em #fff9}
 .clamp i:first-child{left:.8em}.clamp i:last-child{right:.8em}
 .c1{top:28.6em}.c2{top:50.8em;rotate:-4deg}
 /* tiles */
-.tile{width:12em;height:12em;border-radius:3em;display:grid;place-items:center;color:var(--cream);box-shadow:0 2em 3em #0003,inset 0 .5em .8em #fff5,inset 0 -.6em 1em #0004;animation:fl 6s ease-in-out infinite alternate;
+.tile{width:12em;height:12em;border-radius:3em;display:grid;place-items:center;color:var(--ink);box-shadow:0 2em 3em #0008,inset 0 .5em .8em #fff5,inset 0 -.6em 1em #0004;animation:fl 6s ease-in-out infinite alternate;
  translate:calc(var(--mx)*var(--k,1)*1em) calc(var(--my)*var(--k,1)*1em)}
-.tile span{font:900 5.6em/1 'Anybody',sans-serif;font-stretch:104%}.ae{right:9em;bottom:2em;background:radial-gradient(circle at 30% 25%,#ff8a5c,#e0301f 55%,#6a0f08);rotate:9deg;--k:2.2}
-.pr{left:6em;bottom:-1em;width:15em;height:15em;background:radial-gradient(circle at 30% 25%,#7d90ff,var(--blue) 60%,#1a2aa0);rotate:-8deg;filter:blur(2.2px);--k:3;animation-delay:-2s}
-.dv span{font-size:4.2em}.pr span{font-size:7em}.dv{left:14em;top:2em;width:9em;height:9em;background:radial-gradient(circle at 30% 25%,#444,#111);rotate:-12deg;filter:blur(1.4px);--k:1.4;animation-delay:-4s;border-radius:2.4em}
+.tile span{font:900 5.6em/1 'Anybody',sans-serif;font-stretch:104%}.ae{right:9em;bottom:2em;background:radial-gradient(circle at 30% 25%,#ffb08a,var(--orange) 55%,#b8431a);rotate:9deg;--k:2.2}
+.pr{left:6em;bottom:-1em;width:15em;height:15em;background:radial-gradient(circle at 30% 25%,#9aa5ff,var(--blue) 60%,#262f9a);rotate:-8deg;filter:blur(2.2px);--k:3;animation-delay:-2s}
+.dv span{font-size:4.2em}.pr span{font-size:7em}.dv{left:14em;top:2em;width:9em;height:9em;background:radial-gradient(circle at 30% 25%,#3a4170,#0D1130);rotate:-12deg;filter:blur(1.4px);--k:1.4;animation-delay:-4s;border-radius:2.4em}
 @keyframes fl{to{transform:translateY(-1.4em) rotate(2deg)}}
 .card{width:15em;padding:.7em .7em 2em;background:#fff;border-radius:1em;box-shadow:0 1.6em 2.6em #0003;animation:fl 7s ease-in-out infinite alternate;translate:calc(var(--mx)*var(--k,1)*1em) calc(var(--my)*var(--k,1)*1em)}
 .card img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:.6em;display:block}
-.card b{position:absolute;bottom:.55em;left:0;right:0;text-align:center;font:600 .95em 'Anybody',sans-serif;font-stretch:120%;letter-spacing:.1em}
+.card{color:#080B1F}.card b{position:absolute;bottom:.55em;left:0;right:0;text-align:center;font:600 .95em 'Anybody',sans-serif;font-stretch:120%;letter-spacing:.1em}
 .k1{right:5em;top:6em;rotate:8deg;--k:2}.k2{left:4em;top:42em;rotate:-7deg;--k:2.6;animation-delay:-3s}
-.subw{left:0;right:0;top:55.6em;text-align:center}.sub{font:italic 500 2.7em/1.15 'Bodoni',serif}
+.subw{left:0;right:0;top:55.6em;text-align:center}.sub{font:italic 500 2.7em/1.15 'Bodoni',serif;color:var(--ink)}.btn{background:var(--lime);border-color:var(--lime);color:var(--bg)}.btn.o{background:transparent;border-color:var(--ink);color:var(--ink)}.sw{box-shadow:0 0 0 1px #ffffff22,0 8px 30px #0008}
 .sub b{font-weight:800}
 .cta{left:0;right:0;top:61em;display:flex;gap:1em;justify-content:center}
 .btn{font-size:max(12px,1.15em)}
-.tag{position:fixed;top:18px;left:22px;right:22px;display:flex;justify-content:space-between;font:600 12px 'Anybody',sans-serif;font-stretch:118%;letter-spacing:.08em;text-transform:uppercase;z-index:5}
+.tag{color:var(--ink);position:fixed;top:18px;left:22px;right:22px;display:flex;justify-content:space-between;font:600 12px 'Anybody',sans-serif;font-stretch:118%;letter-spacing:.08em;text-transform:uppercase;z-index:5}
 /* portrait */
 @media(max-aspect-ratio:1/1){
  .stage{--u:1vw;height:176em}
@@ -67,7 +67,7 @@
 <div class="bg"></div>
 <div class="tag"><span>Sushant Mohite</span><span>Mumbai · Video + Motion</span></div>
 <div class="stage" id="s">
- <svg class="rib" viewBox="0 0 100 62" preserveAspectRatio="none" id="rib"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#2F4BFF"/><stop offset=".45" stop-color="#FF4B3E"/><stop offset="1" stop-color="#FFC24A"/></linearGradient></defs>
+ <svg class="rib" viewBox="0 0 100 62" preserveAspectRatio="none" id="rib"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#C8FF2C"/><stop offset=".5" stop-color="#FF7A45"/><stop offset="1" stop-color="#4D5CFF"/></linearGradient></defs>
   <path pathLength="1" d="M-4 48 C 6 58, 20 56, 18 46 C 16 36, 2 36, 6 28 C 10 20, 26 14, 44 10 C 58 7, 66 14, 62 20 C 58 27, 50 20, 56 11 C 62 2, 82 -2, 104 6"/></svg>
  <div class="abs pole"></div>
  <div class="abs card k1"><img alt="" src="../media/stills/s03.webp"><b>MOTION</b></div>
